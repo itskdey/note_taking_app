@@ -1,0 +1,71 @@
+name: note_taking_app
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.11.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bounceable: ^1.2.0
+  flutter_svg: ^2.3.0
+  get: ^4.7.3
+  get_storage: ^2.1.1
+  google_fonts: ^8.2.0
+  image_picker: ^1.2.3
+  local_auth: ^3.0.2
+  path: ^1.9.1
+  path_provider: ^2.1.6
+  sqflite: ^2.4.2+1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/logo/logo.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "assets/logo/logo.png"
+  adaptive_icon_foreground: "assets/logo/logo.png"
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/fonts/
+    - assets/svg/
+    - assets/logo/
+
+  fonts:
+    - family: Brier
+      fonts:
+        - asset: assets/fonts/Brier-Bold.ttf
+          weight: 700
+
+    - family: Mona
+      fonts:
+        - asset: assets/fonts/mona.ttf
+
+    - family: Niradei
+      fonts:
+        - asset: assets/fonts/Niradei-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Niradei-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Niradei-Bold.ttf
+          weight: 700
+
+    - family: Romnea
+      fonts:
+        - asset: assets/fonts/Romnea-Italic.ttf
+          style: italic
+
+    - family: Rosela
+      fonts:
+        - asset: assets/fonts/Rosela.ttf  
+    

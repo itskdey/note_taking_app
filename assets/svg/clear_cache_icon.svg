@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <path d="M8.897 11.151C9.2 10.528 9.37 9.828 9.37 9.088C9.37 6.48 7.256 4.43 4.648 4.43C4.178 4.43 3.725 4.501 3.297 4.629C2.872 2.665 1.665 1.043 0 0" fill="none" stroke-width="2.5" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" transform="translate(31.325 29.436)" />
+    <path d="M13.7813 0C12.5673 0.253 11.4683 0.912001 10.6673 1.858C5.93133 0.827999 1.25133 3.824 0.207328 8.561C-0.492672 11.737 0.626328 14.886 2.86333 16.937" fill="none" stroke-width="2.5" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" transform="translate(4.536 19.216)" />
+    <path d="M0 0.843998C0 0.843998 4.414 7.92 13.603 11.181C13.603 11.181 17.57 7.143 21.564 0" fill="none" stroke-width="2.5" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" transform="translate(10.267 30.384)" />
+    <path d="M5.381 0C3.429 2.26 1.588 3.905 0 5.093" fill="none" stroke-width="2.5" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" transform="translate(15.6 23.207)" />
+    <path d="M0 3.909C1.302 3.171 2.905 1.965 4.513 0" fill="none" stroke-width="2.5" stroke="#000000" stroke-linecap="round" transform="translate(14.238 31.451)" />
+    <path d="M0 4.408C1.173 3.561 2.654 2.196 4.326 0" fill="none" stroke-width="2.5" stroke="#000000" stroke-linecap="round" transform="translate(18.981 34.29)" />
+    <path d="M0 3.93357C0 3.93357 2.63 0.744576 2.63 0.744576C3.214 -0.0194244 4.288 -0.225424 5.12 0.266575C5.12 0.266575 12.794 5.00957 12.794 5.00957C13.701 5.54557 13.987 6.70857 13.432 7.59657C13.432 7.59657 11.171 10.6836 11.171 10.6836L0 3.93357L0 3.93357Z" fill="none" stroke-width="2.5" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" transform="translate(20.981 19.273)" />
+    <path d="M0 1.5C0 0.671573 0.671573 0 1.5 0C2.32843 0 3 0.671573 3 1.5C3 2.32843 2.32843 3 1.5 3C0.671573 3 0 2.32843 0 1.5Z" fill="#000000" fill-rule="evenodd" transform="translate(12 6)" />
+    <path d="M0 1.5C0 0.671573 0.671574 0 1.5 0C2.32843 0 3 0.671573 3 1.5C3 2.32843 2.32843 3 1.5 3C0.671574 3 0 2.32843 0 1.5Z" fill="#000000" fill-rule="evenodd" transform="translate(20 11)" />
+    <path d="M0 1.5C0 0.671573 0.671573 0 1.5 0C2.32843 0 3 0.671573 3 1.5C3 2.32843 2.32843 3 1.5 3C0.671573 3 0 2.32843 0 1.5Z" fill="#000000" fill-rule="evenodd" transform="translate(8 13)" />
+    <path d="M9.18 9.93113L5.076 16.4451L0 13.2461C0 13.2461 7.463 1.40113 7.463 1.40113C8.346 -0.000873566 10.199 -0.420874 11.6 0.462126C11.6 0.462126 11.6 0.462126 11.6 0.462126C13.002 1.34513 13.422 3.19813 12.539 4.59913C12.539 4.59913 11.937 5.55513 11.937 5.55513" fill="none" stroke-width="2.5" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" transform="translate(27.268 7.042)" />
+  </g>
+</svg>
