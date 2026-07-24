@@ -27,7 +27,7 @@ class DiaryYearHeader extends StatelessWidget {
                       TextSpan(
                         text: 'Hello there 👋',
                         style: AppFonts.appStyle(
-                          color: AppColors.noteTextPrimary,
+                          color: context.noteTextPrimaryColor,
                           fontSize: 22,
                           fontWeight: FontWeight.w700,
                         ),
@@ -39,7 +39,7 @@ class DiaryYearHeader extends StatelessWidget {
                 Text(
                   '${'diary_greeting'.trParams({'username': greetingName.split(' ').last})} ',
                   style: AppFonts.appStyle(
-                    color: AppColors.noteTextSecondary,
+                    color: context.noteTextSecondaryColor,
                     fontSize: 12,
                   ),
                 ),
@@ -50,7 +50,7 @@ class DiaryYearHeader extends StatelessWidget {
           Text(
             KhmerDateUtils.toKhmerNumber(year),
             style: AppFonts.appStyle(
-              color: AppColors.noteYearWatermark,
+              color: context.noteYearWatermarkColor,
               fontSize: 44,
               fontWeight: FontWeight.w300,
               height: 1,

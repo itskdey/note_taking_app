@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
@@ -18,6 +19,7 @@ import 'package:note_taking_app/widget/dropdown/dropdown_menu.dart';
 import 'package:note_taking_app/widget/sheets/app_name_sheet.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:record/record.dart';
 
 import '../diary_shared/diary_database_service.dart';
 import '../diary_shared/diary_entry_model.dart';
@@ -70,14 +72,14 @@ class _DiaryEntryScreenState extends State<DiaryEntryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope<DiaryEntryModel?>(
+    return PopScope<Object?>(
       canPop: _canPop,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
         await _handleBackPressed();
       },
       child: Scaffold(
-        backgroundColor: AppColors.lightBackgroundColor,
+        backgroundColor: context.appBackgroundColor,
         appBar: _buildAppBar(context),
         body: SafeArea(
           child: Column(
@@ -122,7 +124,7 @@ class _DiaryEntryScreenState extends State<DiaryEntryScreen> {
                         controller: controller,
                         onCamera: () => controller.pickImages(fromCamera: true),
                         onGallery: controller.pickImages,
-                        onMic: () {},
+                        onMic: () => controller.addBlock(DiaryBlockType.voice),
                         onUndo: () {},
                         onRedo: () {},
                       )
@@ -133,6 +135,42 @@ class _DiaryEntryScreenState extends State<DiaryEntryScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _confirmDeleteEntry() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text('delete_note_title'.tr),
+        content: Text('delete_note_message'.tr),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text('cancel'.tr),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+            child: Text('delete'.tr),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    try {
+      final result = await controller.deleteEntry();
+      if (!mounted) return;
+      setState(() => _canPop = true);
+      Get.back(result: result);
+    } catch (_) {
+      if (!mounted) return;
+      Get.snackbar(
+        'delete_note_failed_title'.tr,
+        'delete_note_failed_message'.tr,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
   }
 
   AppBarCustom _buildAppBar(BuildContext context) {
@@ -151,7 +189,7 @@ class _DiaryEntryScreenState extends State<DiaryEntryScreen> {
                     height: 18,
                     width: 18,
                     colorFilter: ColorFilter.mode(
-                      AppColors.noteTextPrimary,
+                      context.noteTextPrimaryColor,
                       BlendMode.srcIn,
                     ),
                   ),
@@ -161,8 +199,8 @@ class _DiaryEntryScreenState extends State<DiaryEntryScreen> {
           iconAsset: AppImages.moreIcon,
           decoration: BoxDecoration(),
           openDecoration: BoxDecoration(),
-          openIconColor: AppColors.noteTextPrimary,
-          iconColor: AppColors.noteTextPrimary,
+          openIconColor: context.noteTextPrimaryColor,
+          iconColor: context.noteTextPrimaryColor,
 
           dropdownItems: [
             DropdownItem(
@@ -197,6 +235,11 @@ class _DiaryEntryScreenState extends State<DiaryEntryScreen> {
             ),
           ],
           onItemSelected: (parent, sub) async {
+            if (parent == 'delete_entry') {
+              await _confirmDeleteEntry();
+              return;
+            }
+
             if (parent == 'lock_diary' || parent == 'unlock_diary') {
               final result = await controller.toggleLock();
               if (!mounted || result == null) return;
@@ -258,7 +301,7 @@ class _DiaryEntryScreenState extends State<DiaryEntryScreen> {
                         controller.monthName,
                         style: AppFonts.appStyle(
                           fontSize: 14,
-                          color: AppColors.noteTextPrimary,
+                          color: context.noteTextPrimaryColor,
                           fontWeight: FontWeight.w500,
                           height: 1.2,
                         ),
@@ -269,7 +312,7 @@ class _DiaryEntryScreenState extends State<DiaryEntryScreen> {
                         ),
                         style: AppFonts.appStyle(
                           fontSize: 13,
-                          color: AppColors.noteTextSecondary,
+                          color: context.noteTextSecondaryColor,
                           height: 1.2,
                         ),
                       ),
@@ -277,10 +320,10 @@ class _DiaryEntryScreenState extends State<DiaryEntryScreen> {
                   ),
                   const SizedBox(width: 10),
                   if (controller.isEditing.value)
-                    const Icon(
+                    Icon(
                       Icons.keyboard_arrow_down_rounded,
                       size: 18,
-                      color: AppColors.noteTextSecondary,
+                      color: context.noteTextSecondaryColor,
                     ),
                 ],
               ),
@@ -340,7 +383,7 @@ class _DiaryEntryScreenState extends State<DiaryEntryScreen> {
               style: AppFonts.appStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
-                color: AppColors.noteTextPrimary,
+                color: context.noteTextPrimaryColor,
                 height: 1.3,
                 letterSpacing: -0.3,
               ),
@@ -351,7 +394,7 @@ class _DiaryEntryScreenState extends State<DiaryEntryScreen> {
               controller.contentController.text,
               style: AppFonts.appStyle(
                 fontSize: 15.5,
-                color: AppColors.noteTextPrimary.withValues(alpha: 0.78),
+                color: context.noteTextPrimaryColor.withValues(alpha: 0.78),
                 height: 1.7,
                 letterSpacing: 0.1,
               ),
@@ -382,7 +425,7 @@ class _DiaryEntryScreenState extends State<DiaryEntryScreen> {
               style: AppFonts.appStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
-                color: AppColors.noteTextPrimary,
+                color: context.noteTextPrimaryColor,
                 height: 1.3,
                 letterSpacing: -0.3,
               ),
@@ -400,7 +443,7 @@ class _DiaryEntryScreenState extends State<DiaryEntryScreen> {
                 focusedErrorBorder: InputBorder.none,
                 hintText: 'diary_title_hint'.tr,
                 hintStyle: AppFonts.appStyle(
-                  color: AppColors.noteTextSecondary.withValues(alpha: 0.6),
+                  color: context.noteTextSecondaryColor.withValues(alpha: 0.6),
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -413,7 +456,7 @@ class _DiaryEntryScreenState extends State<DiaryEntryScreen> {
                 inputFormatters: [_khmerDigitFormatter],
                 style: AppFonts.appStyle(
                   fontSize: 15.5,
-                  color: AppColors.noteTextPrimary.withValues(alpha: 0.78),
+                  color: context.noteTextPrimaryColor.withValues(alpha: 0.78),
                   height: 1.7,
                   letterSpacing: 0.1,
                   fontWeight: controller.isBold.value
@@ -443,7 +486,9 @@ class _DiaryEntryScreenState extends State<DiaryEntryScreen> {
                   focusedErrorBorder: InputBorder.none,
                   hintText: 'diary_content_hint'.tr,
                   hintStyle: AppFonts.appStyle(
-                    color: AppColors.noteTextSecondary.withValues(alpha: 0.5),
+                    color: context.noteTextSecondaryColor.withValues(
+                      alpha: 0.5,
+                    ),
                   ),
                 ),
               ),
@@ -471,13 +516,13 @@ class _AddBlockButton extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: AppColors.noteSurface,
-          border: Border.all(color: AppColors.noteChipBorder, width: 1),
+          color: context.noteSurfaceColor,
+          border: Border.all(color: context.noteChipBorderColor, width: 1),
         ),
-        child: const Icon(
+        child: Icon(
           Icons.add_rounded,
           size: 22,
-          color: AppColors.noteTextPrimary,
+          color: context.noteTextPrimaryColor,
         ),
       ),
     );

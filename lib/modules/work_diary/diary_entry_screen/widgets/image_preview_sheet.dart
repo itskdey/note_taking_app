@@ -30,7 +30,7 @@ class _ImagePreviewSheetState extends State<ImagePreviewSheet> {
                 height: 4,
                 margin: const EdgeInsets.only(bottom: 16),
                 decoration: BoxDecoration(
-                  color: AppColors.noteChipBorder,
+                  color: context.noteChipBorderColor,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -39,7 +39,7 @@ class _ImagePreviewSheetState extends State<ImagePreviewSheet> {
               '${_selected.length} / ${widget.images.length} selected',
               style: AppFonts.appStyle(
                 fontWeight: FontWeight.w600,
-                color: AppColors.noteTextPrimary,
+                color: context.noteTextPrimaryColor,
               ),
             ),
             const SizedBox(height: 12),
@@ -99,7 +99,7 @@ class _ImagePreviewSheetState extends State<ImagePreviewSheet> {
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 decoration: BoxDecoration(
                   color: _selected.isEmpty
-                      ? AppColors.noteChipBorder
+                      ? context.noteChipBorderColor
                       : AppColors.appRed,
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -124,7 +124,9 @@ class _ImagePreviewSheetState extends State<ImagePreviewSheet> {
                 onPressed: () => Get.back(result: null),
                 child: Text(
                   'cancel'.tr,
-                  style: AppFonts.appStyle(color: AppColors.noteTextSecondary),
+                  style: AppFonts.appStyle(
+                    color: context.noteTextSecondaryColor,
+                  ),
                 ),
               ),
             ),

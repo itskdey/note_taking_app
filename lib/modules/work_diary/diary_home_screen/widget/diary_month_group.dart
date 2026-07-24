@@ -78,16 +78,16 @@ class _MonthPill extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         decoration: BoxDecoration(
-          color: AppColors.noteChipBackground,
+          color: context.noteChipBackgroundColor,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.noteChipBorder),
+          border: Border.all(color: context.noteChipBorderColor),
         ),
         child: Text(
           label,
           style: AppFonts.appStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: AppColors.lightTextColor,
+            color: context.noteTextPrimaryColor,
           ),
         ),
       ),
@@ -112,14 +112,15 @@ class _DiaryTimelineRow extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onToggleBookmark;
 
-  static const Color _lineColor = AppColors.timeline;
   static const Color _dayCircleColor = AppColors.timelineBadge;
-  static const Color _dotColor = AppColors.primaryColor;
 
   String get _timeLabel => KhmerDateUtils.formatTime(entry.date);
 
   @override
   Widget build(BuildContext context) {
+    final lineColor = context.timelineColor;
+    final dotColor = Theme.of(context).colorScheme.secondary;
+
     return GestureDetector(
       onTap: onTap,
       child: IntrinsicHeight(
@@ -136,7 +137,9 @@ class _DiaryTimelineRow extends StatelessWidget {
                       style: AppFonts.appStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.lightTextColor.withValues(alpha: 0.55),
+                        color: context.noteTextPrimaryColor.withValues(
+                          alpha: 0.55,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -160,12 +163,12 @@ class _DiaryTimelineRow extends StatelessWidget {
                   ] else ...[
                     // Keep the dot centered on the time label. The line
                     // before it only fills the space above the marker.
-                    Container(width: 2, height: 5, color: _lineColor),
+                    Container(width: 2, height: 5, color: lineColor),
                     Container(
                       width: 6,
                       height: 6,
-                      decoration: const BoxDecoration(
-                        color: _dotColor,
+                      decoration: BoxDecoration(
+                        color: dotColor,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -173,7 +176,7 @@ class _DiaryTimelineRow extends StatelessWidget {
                   Expanded(
                     child: isLast
                         ? const SizedBox.shrink()
-                        : Center(child: Container(width: 2, color: _lineColor)),
+                        : Center(child: Container(width: 2, color: lineColor)),
                   ),
                 ],
               ),
@@ -210,7 +213,7 @@ class _DiaryTimelineRow extends StatelessWidget {
                                 ? Icons.bookmark_rounded
                                 : Icons.bookmark_border_rounded,
                             size: 18,
-                            color: AppColors.lightTextColor.withValues(
+                            color: context.noteTextPrimaryColor.withValues(
                               alpha: 0.45,
                             ),
                           ),
@@ -230,7 +233,7 @@ class _DiaryTimelineRow extends StatelessWidget {
                             fontSize: isDayHead ? 16 : 16,
                             fontWeight: FontWeight.w700,
                             height: 1.35,
-                            color: AppColors.lightTextColor,
+                            color: context.noteTextPrimaryColor,
                           ),
                         ),
                       if (entry.content.trim().isNotEmpty)
@@ -240,7 +243,7 @@ class _DiaryTimelineRow extends StatelessWidget {
                             fontSize: isDayHead ? 11 : 11,
                             fontWeight: FontWeight.w500,
                             height: 1.35,
-                            color: AppColors.noteTextSecondary,
+                            color: context.noteTextSecondaryColor,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -253,7 +256,7 @@ class _DiaryTimelineRow extends StatelessWidget {
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.noteChipBackground,
+                            color: context.noteChipBackgroundColor,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
@@ -262,7 +265,7 @@ class _DiaryTimelineRow extends StatelessWidget {
                               Icon(
                                 Icons.image_outlined,
                                 size: 14,
-                                color: AppColors.lightTextColor.withValues(
+                                color: context.noteTextPrimaryColor.withValues(
                                   alpha: 0.6,
                                 ),
                               ),
@@ -276,9 +279,8 @@ class _DiaryTimelineRow extends StatelessWidget {
                                 style: AppFonts.appStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w500,
-                                  color: AppColors.lightTextColor.withValues(
-                                    alpha: 0.7,
-                                  ),
+                                  color: context.noteTextPrimaryColor
+                                      .withValues(alpha: 0.7),
                                 ),
                               ),
                             ],
@@ -302,7 +304,7 @@ class _LockedEntryPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dotColor = AppColors.lightTextColor.withValues(alpha: 0.72);
+    final dotColor = context.noteTextPrimaryColor.withValues(alpha: 0.72);
 
     return Padding(
       padding: const EdgeInsets.only(top: 3),
@@ -320,7 +322,7 @@ class _LockedEntryPreview extends StatelessWidget {
               Icon(
                 Icons.lock_rounded,
                 size: 16,
-                color: AppColors.lightTextColor.withValues(alpha: 0.58),
+                color: context.noteTextPrimaryColor.withValues(alpha: 0.58),
               ),
             ],
           ),

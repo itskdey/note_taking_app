@@ -68,5 +68,7 @@
 	</array>
 	<key>NSFaceIDUsageDescription</key>
 	<string>We require Face ID or Touch ID authentication to secure and unlock your private diary notes.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Allow microphone access to record voice notes in your diary.</string>
 </dict>
 </plist>

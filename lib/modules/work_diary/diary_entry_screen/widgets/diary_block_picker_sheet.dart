@@ -53,9 +53,9 @@ const List<_DiaryBlockOptionSpec> _diaryBlockOptions = [
     labelKey: 'block_heading',
   ),
   _DiaryBlockOptionSpec(
-    type: DiaryBlockType.callout,
-    icon: Icons.lightbulb_outline_rounded,
-    labelKey: 'block_callout',
+    type: DiaryBlockType.voice,
+    icon: Icons.mic_none_rounded,
+    labelKey: 'block_voice',
   ),
 ];
 
@@ -79,9 +79,9 @@ class _DiaryBlockPickerSheet extends StatelessWidget {
         margin: const EdgeInsets.fromLTRB(16, 0, 16, 0),
         padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
         decoration: BoxDecoration(
-          color: AppColors.noteSurface,
+          color: context.noteSurfaceColor,
           borderRadius: BorderRadius.circular(30),
-          border: Border.all(color: AppColors.noteChipBorder, width: 0.6),
+          border: Border.all(color: context.noteChipBorderColor, width: 0.6),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -93,7 +93,7 @@ class _DiaryBlockPickerSheet extends StatelessWidget {
                 height: 4,
                 margin: const EdgeInsets.only(bottom: 10),
                 decoration: BoxDecoration(
-                  color: AppColors.noteChipBorder,
+                  color: context.noteChipBorderColor,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -115,7 +115,7 @@ class _DiaryBlockPickerSheet extends StatelessWidget {
                       style: AppFonts.appStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.noteTextSecondary,
+                        color: context.noteTextSecondaryColor,
                       ),
                     ),
                   ),
@@ -166,9 +166,9 @@ class _BlockOptionTile extends StatelessWidget {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: AppColors.lightBackgroundColor,
+              color: context.appBackgroundColor,
               borderRadius: BorderRadius.circular(13),
-              border: Border.all(color: AppColors.noteChipBorder, width: 1),
+              border: Border.all(color: context.noteChipBorderColor, width: 1),
             ),
             child: Icon(spec.icon, size: 19, color: AppColors.appRed),
           ),
@@ -179,7 +179,7 @@ class _BlockOptionTile extends StatelessWidget {
             style: AppFonts.appStyle(
               fontSize: 11.5,
               fontWeight: FontWeight.w500,
-              color: AppColors.noteTextPrimary,
+              color: context.noteTextPrimaryColor,
             ),
           ),
         ],

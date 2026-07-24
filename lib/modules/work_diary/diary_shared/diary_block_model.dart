@@ -10,6 +10,7 @@ enum DiaryBlockType {
   image,
   heading,
   callout,
+  voice,
 }
 
 extension DiaryBlockTypeX on DiaryBlockType {
@@ -57,6 +58,8 @@ class DiaryBlock {
     List<DiaryBlockOption>? options,
     List<String>? imagePaths,
     this.text,
+    this.audioPath,
+    this.audioDurationMs = 0,
   }) : options = options ?? [],
        imagePaths = imagePaths ?? [];
 
@@ -65,6 +68,8 @@ class DiaryBlock {
   List<DiaryBlockOption> options; // checklist / radio / bullet / numbered
   String? text; // quote / heading / callout
   List<String> imagePaths; // image only
+  String? audioPath; // voice only
+  int audioDurationMs; // voice only
 
   factory DiaryBlock.fromJson(Map<String, dynamic> json) {
     return DiaryBlock(
@@ -74,6 +79,8 @@ class DiaryBlock {
           .map((e) => DiaryBlockOption.fromJson(e as Map<String, dynamic>))
           .toList(),
       text: json['text'] as String?,
+      audioPath: json['audioPath'] as String?,
+      audioDurationMs: json['audioDurationMs'] as int? ?? 0,
       imagePaths: (json['imagePaths'] as List<dynamic>? ?? [])
           .map((path) => path.toString())
           .toList(),
@@ -86,6 +93,8 @@ class DiaryBlock {
     'options': options.map((e) => e.toJson()).toList(),
     'text': text,
     'imagePaths': imagePaths,
+    'audioPath': audioPath,
+    'audioDurationMs': audioDurationMs,
   };
 
   static String encodeList(List<DiaryBlock> blocks) =>

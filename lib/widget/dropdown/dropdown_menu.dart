@@ -12,6 +12,9 @@ import 'package:note_taking_app/core/values/app_fonts.dart';
 //
 // FullWidthDropdownButton.rich(
 //   iconAsset: AppImages.scanQr,
+//   iconSize: 20,
+//   openIconAsset: AppImages.close,
+//   openIconTurns: 0.25, // 90 degrees
 //   dropdownItems: [
 //     DropdownItem(
 //       label: "ប្រភេទអាហារ",
@@ -116,6 +119,9 @@ class FullWidthDropdownButton extends StatefulWidget {
     this.openDecoration,
     this.iconColor,
     this.openIconColor,
+    this.iconSize,
+    this.openIconAsset,
+    this.openIconTurns,
     required List<String> items,
     required ValueChanged<String> onSelected,
     this.selectedItem,
@@ -138,9 +144,18 @@ class FullWidthDropdownButton extends StatefulWidget {
     this.onClose,
     this.iconColor,
     this.openIconColor,
+    this.iconSize,
+    this.openIconAsset,
+    this.openIconTurns,
   });
 
   final String iconAsset;
+  final String? openIconAsset;
+  final double? iconSize;
+
+  /// Rotation applied while the dropdown is open.
+  /// One full turn is 360°, so 0.25 is 90° and 0.5 is 180°.
+  final double? openIconTurns;
   final List<DropdownItem> dropdownItems;
   final void Function(String parent, String? sub) onItemSelected;
   final String? selectedItem;
@@ -303,24 +318,43 @@ class _FullWidthDropdownButtonState extends State<FullWidthDropdownButton>
                         )
                   : widget.decoration ??
                         BoxDecoration(
-                          color: AppColors.noteChipBackground,
+                          color: context.noteChipBackgroundColor,
                           borderRadius: BorderRadius.circular(100),
                         ),
-              child:
-                  widget.child ??
-                  SvgPicture.asset(
-                    widget.iconAsset,
-                    colorFilter: ColorFilter.mode(
-                      _isOpen
-                          ? widget.openIconColor ?? Colors.white
-                          : widget.iconColor ?? AppColors.noteTextSecondary,
-                      BlendMode.srcIn,
-                    ),
-                  ),
+              child: _buildIcon(),
             ),
           );
         },
       ),
+    );
+  }
+
+  Widget _buildIcon() {
+    final openIconAsset = widget.openIconAsset;
+    final Widget icon;
+    if (!_isOpen && widget.child != null) {
+      icon = widget.child!;
+    } else if (_isOpen && openIconAsset == null && widget.child != null) {
+      icon = widget.child!;
+    } else {
+      icon = SvgPicture.asset(
+        _isOpen ? openIconAsset ?? widget.iconAsset : widget.iconAsset,
+        width: widget.iconSize,
+        height: widget.iconSize,
+        colorFilter: ColorFilter.mode(
+          _isOpen
+              ? widget.openIconColor ?? Colors.white
+              : widget.iconColor ?? context.noteTextSecondaryColor,
+          BlendMode.srcIn,
+        ),
+      );
+    }
+
+    return AnimatedRotation(
+      turns: _isOpen ? widget.openIconTurns ?? 0 : 0,
+      duration: const Duration(milliseconds: 280),
+      curve: Curves.easeInOutCubic,
+      child: icon,
     );
   }
 }
@@ -471,8 +505,8 @@ class _AnimatedDropdownPanelState extends State<_AnimatedDropdownPanel>
           opacity: _opacity.value,
           child: Transform(
             transform: Matrix4.identity()
-              ..translate(0.0, -(1.0 - _scaleY.value) * 20)
-              ..scale(1.0, _scaleY.value),
+              ..translateByDouble(0.0, -(1.0 - _scaleY.value) * 20, 0.0, 1.0)
+              ..scaleByDouble(1.0, _scaleY.value, 1.0, 1.0),
             alignment: Alignment.topCenter,
             child: child,
           ),
@@ -485,9 +519,9 @@ class _AnimatedDropdownPanelState extends State<_AnimatedDropdownPanel>
             width: widget.screenWidth,
             margin: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
-              color: AppColors.noteSurface,
+              color: context.noteSurfaceColor,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppColors.noteChipBorder),
+              border: Border.all(color: context.noteChipBorderColor),
               boxShadow: [
                 BoxShadow(
                   blurRadius: 32,
@@ -513,7 +547,7 @@ class _AnimatedDropdownPanelState extends State<_AnimatedDropdownPanel>
                     Divider(
                       height: 1,
                       thickness: 1,
-                      color: AppColors.noteChipBorder,
+                      color: context.noteChipBorderColor,
                       indent: 16,
                       endIndent: 16,
                     ),
@@ -583,7 +617,7 @@ class _AnimatedDropdownPanelState extends State<_AnimatedDropdownPanel>
                       letterSpacing: -0.2,
                       color: item.isDestructible
                           ? actionColor
-                          : AppColors.noteTextPrimary,
+                          : context.noteTextPrimaryColor,
                     ),
                   ),
                 ),
@@ -642,9 +676,7 @@ class _AnimatedDropdownPanelState extends State<_AnimatedDropdownPanel>
       width: 28,
       height: 28,
       decoration: BoxDecoration(
-        color: isActive
-            ? actionColor
-            : actionColor.withValues(alpha: 0.08),
+        color: isActive ? actionColor : actionColor.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(8),
       ),
       alignment: Alignment.center,
@@ -689,10 +721,8 @@ class _AnimatedDropdownPanelState extends State<_AnimatedDropdownPanel>
         ),
         child: Container(
           decoration: BoxDecoration(
-            color: AppColors.noteChipBackground.withValues(alpha: 0.55),
-            border: Border(
-              left: BorderSide(color: AppColors.accent, width: 2),
-            ),
+            color: context.noteChipBackgroundColor.withValues(alpha: 0.55),
+            border: Border(left: BorderSide(color: AppColors.accent, width: 2)),
           ),
           margin: const EdgeInsets.only(left: 20, right: 20, bottom: 8),
           child: ClipRect(
@@ -705,7 +735,7 @@ class _AnimatedDropdownPanelState extends State<_AnimatedDropdownPanel>
                     Divider(
                       height: 1,
                       thickness: 1,
-                      color: AppColors.noteChipBorder,
+                      color: context.noteChipBorderColor,
                       indent: 12,
                       endIndent: 12,
                     ),
@@ -771,12 +801,10 @@ class _AnimatedDropdownPanelState extends State<_AnimatedDropdownPanel>
                     fontSize: 14,
                     fontWeight: isHovered ? FontWeight.w600 : FontWeight.w500,
                     color: subItem.isDestructible
-                        ? actionColor.withValues(
-                            alpha: isHovered ? 1.0 : 0.75,
-                          )
+                        ? actionColor.withValues(alpha: isHovered ? 1.0 : 0.75)
                         : isHovered
-                        ? AppColors.noteTextPrimary
-                        : AppColors.noteTextSecondary,
+                        ? context.noteTextPrimaryColor
+                        : context.noteTextSecondaryColor,
                   ),
                 ),
               ),

@@ -11,6 +11,7 @@ dependencies:
     sdk: flutter
   flutter_bounceable: ^1.2.0
   flutter_svg: ^2.3.0
+  audioplayers: ^6.7.1
   get: ^4.7.3
   get_storage: ^2.1.1
   google_fonts: ^8.2.0
@@ -18,6 +19,7 @@ dependencies:
   local_auth: ^3.0.2
   path: ^1.9.1
   path_provider: ^2.1.6
+  record: ^6.2.1
   sqflite: ^2.4.2+1
 
 dev_dependencies:

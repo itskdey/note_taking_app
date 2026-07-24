@@ -1,4 +1,4 @@
-package com.example.note_taking_app
+package itskdey.komnottra
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

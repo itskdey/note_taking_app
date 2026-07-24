@@ -1,5 +1,12 @@
 import 'package:note_taking_app/modules/work_diary/diary_shared/diary_block_model.dart';
 
+/// Returned by the entry screen when a note was deleted instead of saved.
+class DiaryEntryDeleted {
+  const DiaryEntryDeleted(this.id);
+
+  final String? id;
+}
+
 class DiaryEntryModel {
   final String id;
   final String title;

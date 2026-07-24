@@ -17,7 +17,7 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
   const AppBarCustom({
     super.key,
     required this.title,
-    this.upText = "khtextify.ai",
+    this.upText = "komnottra.setting",
     this.safeAreaBottom = false,
     this.safeAreaTop,
     this.actions,
@@ -29,6 +29,9 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return AppBar(
       elevation: 0,
       automaticallyImplyLeading: false,
@@ -51,15 +54,25 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
                   height: 33,
                   margin: const EdgeInsets.only(left: 15, top: 20, bottom: 20),
                   decoration: BoxDecoration(
-                    color: AppColors.noteChipBackground,
+                    color: isDark
+                        ? colors.surface
+                        : AppColors.noteChipBackground,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.noteChipBorder),
+                    border: Border.all(
+                      color: isDark
+                          ? colors.outline.withValues(alpha: 0.7)
+                          : AppColors.noteChipBorder,
+                    ),
                   ),
                   child: Center(
                     child: SvgPicture.asset(
                       AppImages.arrowBack,
                       width: 22,
                       height: 22,
+                      colorFilter: ColorFilter.mode(
+                        colors.onSurface,
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
                 ),
@@ -80,6 +93,7 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
                         fontSize: 10,
                         fontWeight: FontWeight.w500,
                         height: 1,
+                        color: colors.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                     Text(
@@ -87,6 +101,7 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
                       style: AppFonts.appStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w700,
+                        color: colors.onSurface,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

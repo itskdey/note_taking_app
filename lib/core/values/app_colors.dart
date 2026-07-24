@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'package:flutter/material.dart';
 
 class AppColors {
   AppColors._();
@@ -56,4 +56,39 @@ class AppColors {
   static const Color warmShadow = Color(
     0x1F3F4E5C,
   ); // name kept for compatibility, now a cool slate shadow
+}
+
+extension AppThemeColors on BuildContext {
+  Color get appBackgroundColor => Theme.of(this).scaffoldBackgroundColor;
+
+  Color get noteSurfaceColor => Theme.of(this).colorScheme.surface;
+
+  Color get noteTextPrimaryColor => Theme.of(this).colorScheme.onSurface;
+
+  Color get noteTextSecondaryColor =>
+      Theme.of(this).colorScheme.onSurface.withValues(alpha: 0.62);
+
+  Color get noteDividerColor =>
+      Theme.of(this).colorScheme.outline.withValues(alpha: 0.72);
+
+  Color get noteChipBackgroundColor =>
+      Theme.of(this).brightness == Brightness.dark
+      ? Theme.of(this).colorScheme.onSurface.withValues(alpha: 0.08)
+      : AppColors.noteChipBackground;
+
+  Color get noteChipBorderColor =>
+      Theme.of(this).colorScheme.outline.withValues(alpha: 0.72);
+
+  Color get notePillColor => Theme.of(this).brightness == Brightness.dark
+      ? Theme.of(this).colorScheme.secondary
+      : AppColors.notePill;
+
+  Color get noteYearWatermarkColor =>
+      Theme.of(this).colorScheme.onSurface.withValues(alpha: 0.1);
+
+  Color get noteEmptyIconColor =>
+      Theme.of(this).colorScheme.onSurface.withValues(alpha: 0.3);
+
+  Color get timelineColor =>
+      Theme.of(this).colorScheme.outline.withValues(alpha: 0.75);
 }

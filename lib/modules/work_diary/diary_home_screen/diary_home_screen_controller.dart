@@ -81,6 +81,8 @@ class DiaryHomeController extends GetxController {
     final result = await Get.toNamed(Routes.diaryEntry);
     if (result is DiaryEntryModel) {
       entries.add(result);
+    } else if (result is DiaryEntryDeleted && result.id != null) {
+      entries.removeWhere((entry) => entry.id == result.id);
     }
   }
 
@@ -91,6 +93,8 @@ class DiaryHomeController extends GetxController {
     if (result is DiaryEntryModel) {
       final index = entries.indexWhere((e) => e.id == result.id);
       if (index != -1) entries[index] = result;
+    } else if (result is DiaryEntryDeleted) {
+      entries.removeWhere((item) => item.id == result.id);
     }
   }
 

@@ -191,7 +191,7 @@ class AppNameSheetWidget extends StatelessWidget {
     return Container(
       width: Get.width,
       decoration: BoxDecoration(
-        color: backgroundColor ?? AppColors.lightBackgroundColor,
+        color: backgroundColor ?? context.appBackgroundColor,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(borderRadius),
           topRight: Radius.circular(borderRadius),
@@ -244,7 +244,7 @@ class AppNameSheetWidget extends StatelessWidget {
                         if (badge) ...[
                           Container(
                             decoration: BoxDecoration(
-                              color: Colors.grey.withOpacity(0.12),
+                              color: Colors.grey.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(5),
                             ),
                             padding: EdgeInsets.symmetric(
@@ -318,7 +318,9 @@ class AppNameSheetWidget extends StatelessWidget {
                                         onTap:
                                             secondaryOnTap ?? () => Get.back(),
                                         height: buttonHeight,
-                                        color: Colors.grey.withOpacity(0.12),
+                                        color: Colors.grey.withValues(
+                                          alpha: 0.12,
+                                        ),
                                         textColor:
                                             AppColors.darkBackgroundColor,
                                         icon: secondaryButtonIcon,
@@ -498,7 +500,7 @@ class AppNameSheetButton extends StatelessWidget {
             Text(
               text,
               style: AppFonts.appStyle(
-                color: textColor ?? AppColors.lightBackgroundColor,
+                color: textColor ?? context.appBackgroundColor,
                 fontWeight: FontWeight.w500,
               ),
             ),

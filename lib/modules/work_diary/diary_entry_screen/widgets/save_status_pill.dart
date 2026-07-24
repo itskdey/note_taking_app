@@ -48,7 +48,7 @@ class SaveStatusPill extends StatelessWidget {
         case DiarySaveStatus.idle:
           indicator = const SizedBox(width: 6, height: 6);
           label = '';
-          color = AppColors.noteTextSecondary;
+          color = context.noteTextSecondaryColor;
           break;
       }
 

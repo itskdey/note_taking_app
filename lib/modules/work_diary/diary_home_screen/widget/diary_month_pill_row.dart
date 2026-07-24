@@ -40,7 +40,7 @@ class DiaryMonthPillRow extends StatelessWidget {
       for (final month in months) KhmerDateUtils.monthName(month),
     ];
     final textStyle = AppFonts.appStyle(
-      color: AppColors.noteTextSecondary,
+      color: context.noteTextSecondaryColor,
       fontSize: 14,
       fontWeight: FontWeight.w500,
     );
@@ -75,7 +75,7 @@ class DiaryMonthPillRow extends StatelessWidget {
                     bottom: 0,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
-                        color: AppColors.noteChipBackground,
+                        color: context.noteChipBackgroundColor,
                         borderRadius: BorderRadius.circular(18),
                       ),
                     ),
@@ -112,7 +112,7 @@ class DiaryMonthPillRow extends StatelessWidget {
                     },
                     child: DecoratedBox(
                       decoration: BoxDecoration(
-                        color: AppColors.notePill,
+                        color: context.notePillColor,
                         borderRadius: BorderRadius.circular(18),
                       ),
                     ),
@@ -133,7 +133,7 @@ class DiaryMonthPillRow extends StatelessWidget {
                           style: textStyle.copyWith(
                             color: selectedMonth == months[index]
                                 ? Colors.white
-                                : AppColors.noteTextSecondary,
+                                : context.noteTextSecondaryColor,
                           ),
                           child: Text(labels[index]),
                         ),

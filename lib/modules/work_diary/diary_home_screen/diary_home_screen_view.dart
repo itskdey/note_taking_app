@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:note_taking_app/core/values/app_colors.dart';
 import 'package:note_taking_app/core/values/app_fonts.dart';
+import 'package:note_taking_app/core/values/app_images.dart';
 import 'package:note_taking_app/routes/app_routes.dart';
 import 'package:note_taking_app/widget/animation/animated_widget.dart';
+import 'package:note_taking_app/widget/dropdown/dropdown_menu.dart';
 
 import '../diary_shared/diary_database_service.dart';
 import '../diary_shared/diary_entry_model.dart';
@@ -26,7 +29,7 @@ class DiaryHomeScreen extends GetView<DiaryHomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightBackgroundColor,
+      backgroundColor: context.appBackgroundColor,
       body: SafeArea(
         child: Obx(() {
           final Map<int, List<DiaryEntryModel>> grouped =
@@ -285,14 +288,69 @@ class _DiaryHomeContentState extends State<_DiaryHomeContent>
         Column(
           crossAxisAlignment: .start,
           children: [
-            DiaryYearHeader(greetingName: "user", year: 2026),
+            GestureDetector(
+              onTap: () {},
+              child: DiaryYearHeader(greetingName: "user", year: 2026),
+            ),
 
             SizeTransition(
               sizeFactor: _greetingVisibility,
               axisAlignment: -1,
               child: FadeTransition(
                 opacity: _greetingVisibility,
-                child: RepaintBoundary(child: _buildGreeting()),
+                child: RepaintBoundary(
+                  child: Row(
+                    children: [
+                      Expanded(child: _buildGreeting()),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: FullWidthDropdownButton.rich(
+                          openIconAsset: AppImages.arrowFUp,
+                          iconAsset: AppImages.arrowFUp,
+                          iconSize: 30,
+                          openIconTurns: 0.25,
+
+                          decoration: BoxDecoration(),
+                          openDecoration: BoxDecoration(),
+                          openIconColor: context.noteTextPrimaryColor,
+                          iconColor: context.noteTextPrimaryColor,
+
+                          dropdownItems: [
+                            DropdownItem(
+                              label: "Setting",
+                              leading: SvgPicture.asset(
+                                AppImages.smartGuesture,
+                                width: 18,
+                                height: 18,
+                              ),
+                            ),
+                            DropdownItem(
+                              isDestructible: true,
+                              label: "delete_entry",
+                              leading: SvgPicture.asset(
+                                AppImages.deleteIcon,
+                                width: 18,
+                                height: 18,
+                                colorFilter: ColorFilter.mode(
+                                  AppColors.danger,
+                                  BlendMode.srcIn,
+                                ),
+                              ),
+                            ),
+                          ],
+                          onItemSelected: (parent, sub) async {
+                            if (parent == 'Setting') {
+                              Get.toNamed(Routes.settingScreen);
+                            }
+                            if (parent == 'delete_entry') {
+                              return;
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
 
@@ -346,7 +404,7 @@ class _DiaryHomeContentState extends State<_DiaryHomeContent>
                             height: _stickyHeaderHeight,
                             child: IgnorePointer(
                               child: ColoredBox(
-                                color: AppColors.lightBackgroundColor,
+                                color: context.appBackgroundColor,
                                 child: Align(
                                   alignment: Alignment.topLeft,
                                   child: _MonthPill(
@@ -402,7 +460,7 @@ class DiaryHomeSplash extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(24),
-      color: AppColors.lightBackgroundColor,
+      color: context.appBackgroundColor,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,

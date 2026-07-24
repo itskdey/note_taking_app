@@ -98,6 +98,8 @@ class _DiaryBlockWrapper extends StatelessWidget {
           controller: controller,
           type: _DiaryTextBlockType.callout,
         );
+      case DiaryBlockType.voice:
+        return _DiaryVoiceBlock(block: block, controller: controller);
     }
   }
 }
@@ -288,14 +290,14 @@ class _DiaryImageTile extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           ColoredBox(
-            color: AppColors.noteChipBackground,
+            color: context.noteChipBackgroundColor,
             child: Image.file(
               File(path),
               fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => const Center(
+              errorBuilder: (_, _, _) => Center(
                 child: Icon(
                   Icons.broken_image_outlined,
-                  color: AppColors.noteTextSecondary,
+                  color: context.noteTextSecondaryColor,
                 ),
               ),
             ),
@@ -488,12 +490,12 @@ class _DiaryOptionRowState extends State<_DiaryOptionRow> {
                 fontSize: 15,
                 height: 1.5,
                 color: checked && !widget.isRadio
-                    ? AppColors.noteTextSecondary
-                    : AppColors.noteTextPrimary,
+                    ? context.noteTextSecondaryColor
+                    : context.noteTextPrimaryColor,
                 decoration: checked && !widget.isRadio
                     ? TextDecoration.lineThrough
                     : null,
-                // decorationColor: AppColors.noteChipBorder,
+                // decorationColor: context.noteChipBorderColor,
               ),
               decoration: InputDecoration(
                 isDense: true,
@@ -501,7 +503,7 @@ class _DiaryOptionRowState extends State<_DiaryOptionRow> {
                 border: InputBorder.none,
                 hintText: 'block_item_hint'.tr,
                 hintStyle: AppFonts.appStyle(
-                  color: AppColors.noteTextSecondary.withValues(alpha: 0.5),
+                  color: context.noteTextSecondaryColor.withValues(alpha: 0.5),
                 ),
               ),
             ),
@@ -514,7 +516,7 @@ class _DiaryOptionRowState extends State<_DiaryOptionRow> {
                 child: Icon(
                   Icons.close_rounded,
                   size: 15,
-                  color: AppColors.noteTextSecondary.withValues(alpha: 0.5),
+                  color: context.noteTextSecondaryColor.withValues(alpha: 0.5),
                 ),
               ),
             ),
@@ -538,7 +540,7 @@ class _CheckSquare extends StatelessWidget {
         borderRadius: BorderRadius.circular(6),
         color: checked ? AppColors.appRed : Colors.transparent,
         border: Border.all(
-          color: checked ? AppColors.appRed : AppColors.noteChipBorder,
+          color: checked ? AppColors.appRed : context.noteChipBorderColor,
           width: 1.6,
         ),
       ),
@@ -562,7 +564,7 @@ class _RadioDot extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
-          color: selected ? AppColors.appRed : AppColors.noteChipBorder,
+          color: selected ? AppColors.appRed : context.noteChipBorderColor,
           width: 1.6,
         ),
       ),
@@ -594,12 +596,12 @@ class _AddOptionRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 4),
         child: Row(
           children: [
-            const SizedBox(
+            SizedBox(
               width: 19,
               child: Icon(
                 Icons.add_rounded,
                 size: 16,
-                color: AppColors.noteTextSecondary,
+                color: context.noteTextSecondaryColor,
               ),
             ),
             const SizedBox(width: 10),
@@ -607,7 +609,7 @@ class _AddOptionRow extends StatelessWidget {
               'add_item'.tr,
               style: AppFonts.appStyle(
                 fontSize: 14,
-                color: AppColors.noteTextSecondary,
+                color: context.noteTextSecondaryColor,
               ),
             ),
           ],
@@ -686,8 +688,12 @@ class _DiaryPlainListRowState extends State<_DiaryPlainListRow> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+    return Container(
+      padding: const EdgeInsets.fromLTRB(14, 12, 16, 12),
+      decoration: BoxDecoration(
+        color: AppColors.appRed.withValues(alpha: 0.055),
+        borderRadius: BorderRadius.circular(14),
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -698,7 +704,7 @@ class _DiaryPlainListRowState extends State<_DiaryPlainListRow> {
               textAlign: TextAlign.center,
               style: AppFonts.appStyle(
                 fontSize: 13,
-                color: AppColors.noteTextSecondary,
+                color: context.noteTextSecondaryColor,
               ),
             ),
           ),
@@ -711,7 +717,7 @@ class _DiaryPlainListRowState extends State<_DiaryPlainListRow> {
               style: AppFonts.appStyle(
                 fontSize: 15,
                 height: 1.5,
-                color: AppColors.noteTextPrimary,
+                color: context.noteTextPrimaryColor,
               ),
               decoration: InputDecoration(
                 isDense: true,
@@ -719,7 +725,7 @@ class _DiaryPlainListRowState extends State<_DiaryPlainListRow> {
                 border: InputBorder.none,
                 hintText: 'block_item_hint'.tr,
                 hintStyle: AppFonts.appStyle(
-                  color: AppColors.noteTextSecondary.withValues(alpha: 0.5),
+                  color: context.noteTextSecondaryColor.withValues(alpha: 0.5),
                 ),
               ),
             ),
@@ -732,7 +738,7 @@ class _DiaryPlainListRowState extends State<_DiaryPlainListRow> {
                 child: Icon(
                   Icons.close_rounded,
                   size: 15,
-                  color: AppColors.noteTextSecondary.withValues(alpha: 0.5),
+                  color: context.noteTextSecondaryColor.withValues(alpha: 0.5),
                 ),
               ),
             ),
@@ -763,18 +769,27 @@ class _DiaryTextBlock extends StatefulWidget {
 
 class _DiaryTextBlockState extends State<_DiaryTextBlock> {
   late final TextEditingController _text;
+  late final FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
     _text = TextEditingController(text: widget.block.text ?? '');
+    _focusNode = FocusNode();
     _text.addListener(
       () => widget.controller.updateBlockText(widget.block.id, _text.text),
     );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !widget.controller.takeNewBlockFocus(widget.block.id)) {
+        return;
+      }
+      _focusNode.requestFocus();
+    });
   }
 
   @override
   void dispose() {
+    _focusNode.dispose();
     _text.dispose();
     super.dispose();
   }
@@ -784,6 +799,7 @@ class _DiaryTextBlockState extends State<_DiaryTextBlock> {
     return switch (widget.type) {
       _DiaryTextBlockType.heading => TextField(
         controller: _text,
+        focusNode: _focusNode,
         maxLines: null,
         textCapitalization: TextCapitalization.sentences,
         inputFormatters: [KhmerDateUtils.khmerDigitFormatter],
@@ -791,17 +807,23 @@ class _DiaryTextBlockState extends State<_DiaryTextBlock> {
           fontSize: 21,
           height: 1.35,
           fontWeight: FontWeight.w700,
-          color: AppColors.noteTextPrimary,
+          color: context.noteTextPrimaryColor,
         ),
         decoration: InputDecoration(
           isDense: true,
+          filled: false,
           contentPadding: EdgeInsets.zero,
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          disabledBorder: InputBorder.none,
+          errorBorder: InputBorder.none,
+          focusedErrorBorder: InputBorder.none,
           hintText: 'block_heading_hint'.tr,
           hintStyle: AppFonts.appStyle(
             fontSize: 21,
             fontWeight: FontWeight.w700,
-            color: AppColors.noteTextSecondary.withValues(alpha: 0.4),
+            color: context.noteTextSecondaryColor.withValues(alpha: 0.4),
           ),
         ),
       ),
@@ -810,7 +832,6 @@ class _DiaryTextBlockState extends State<_DiaryTextBlock> {
         decoration: BoxDecoration(
           color: AppColors.appRed.withValues(alpha: 0.07),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.appRed.withValues(alpha: 0.18)),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -827,21 +848,30 @@ class _DiaryTextBlockState extends State<_DiaryTextBlock> {
             Expanded(
               child: TextField(
                 controller: _text,
+                focusNode: _focusNode,
                 maxLines: null,
                 textCapitalization: TextCapitalization.sentences,
                 inputFormatters: [KhmerDateUtils.khmerDigitFormatter],
                 style: AppFonts.appStyle(
                   fontSize: 15,
                   height: 1.55,
-                  color: AppColors.noteTextPrimary,
+                  color: context.noteTextPrimaryColor,
                 ),
                 decoration: InputDecoration(
                   isDense: true,
+                  filled: false,
                   contentPadding: EdgeInsets.zero,
                   border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  errorBorder: InputBorder.none,
+                  focusedErrorBorder: InputBorder.none,
                   hintText: 'block_callout_hint'.tr,
                   hintStyle: AppFonts.appStyle(
-                    color: AppColors.noteTextSecondary.withValues(alpha: 0.55),
+                    color: context.noteTextSecondaryColor.withValues(
+                      alpha: 0.55,
+                    ),
                   ),
                 ),
               ),
@@ -866,60 +896,381 @@ class _DiaryQuoteBlock extends StatefulWidget {
 
 class _DiaryQuoteBlockState extends State<_DiaryQuoteBlock> {
   late final TextEditingController _text;
+  late final FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
     _text = TextEditingController(text: widget.block.text ?? '');
+    _focusNode = FocusNode();
     _text.addListener(
       () => widget.controller.updateBlockText(widget.block.id, _text.text),
     );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !widget.controller.takeNewBlockFocus(widget.block.id)) {
+        return;
+      }
+      _focusNode.requestFocus();
+    });
   }
 
   @override
   void dispose() {
+    _focusNode.dispose();
     _text.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return IntrinsicHeight(
+    return Container(
+      padding: const EdgeInsets.fromLTRB(14, 12, 16, 12),
+      decoration: BoxDecoration(
+        color: Theme.of(context).brightness == Brightness.dark
+            ? AppColors.accent.withValues(alpha: 0.14)
+            : const Color.fromARGB(74, 221, 232, 240),
+        borderRadius: BorderRadius.circular(14),
+      ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 3,
-            decoration: BoxDecoration(
-              color: AppColors.appRed,
-              borderRadius: BorderRadius.circular(2),
+          Padding(
+            padding: const EdgeInsets.only(top: 1, right: 10),
+            child: Icon(
+              Icons.format_quote_rounded,
+              size: 24,
+              color: AppColors.appRed.withValues(alpha: 0.72),
             ),
           ),
-          const SizedBox(width: 12),
           Expanded(
             child: TextField(
               controller: _text,
+              focusNode: _focusNode,
               maxLines: null,
               inputFormatters: [KhmerDateUtils.khmerDigitFormatter],
               style: AppFonts.appStyle(
-                fontSize: 15,
-                height: 1.6,
+                fontSize: 16,
+                height: 1.55,
                 fontStyle: FontStyle.italic,
-                color: AppColors.noteTextPrimary.withValues(alpha: 0.85),
+                color: context.noteTextPrimaryColor.withValues(alpha: 0.82),
               ),
               decoration: InputDecoration(
                 isDense: true,
-                contentPadding: EdgeInsets.zero,
+                filled: false,
+                contentPadding: const EdgeInsets.only(top: 1),
                 border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
+                focusedErrorBorder: InputBorder.none,
                 hintText: 'block_quote_hint'.tr,
                 hintStyle: AppFonts.appStyle(
+                  fontSize: 16,
                   fontStyle: FontStyle.italic,
-                  color: AppColors.noteTextSecondary.withValues(alpha: 0.5),
+                  color: context.noteTextSecondaryColor.withValues(alpha: 0.45),
                 ),
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ---------- voice ----------
+
+class _DiaryVoiceBlock extends StatefulWidget {
+  const _DiaryVoiceBlock({required this.block, required this.controller});
+
+  final DiaryBlock block;
+  final DiaryEntryController controller;
+
+  @override
+  State<_DiaryVoiceBlock> createState() => _DiaryVoiceBlockState();
+}
+
+class _DiaryVoiceBlockState extends State<_DiaryVoiceBlock> {
+  final AudioRecorder _recorder = AudioRecorder();
+  final AudioPlayer _player = AudioPlayer();
+  final Stopwatch _recordingWatch = Stopwatch();
+
+  Timer? _recordingTimer;
+  bool _isRecording = false;
+  bool _isPlaying = false;
+  Duration _recordingDuration = Duration.zero;
+  Duration _position = Duration.zero;
+
+  String? get _audioPath => widget.block.audioPath;
+
+  Duration get _audioDuration =>
+      Duration(milliseconds: widget.block.audioDurationMs);
+
+  @override
+  void initState() {
+    super.initState();
+    _player.onPlayerStateChanged.listen((state) {
+      if (!mounted) return;
+      setState(() => _isPlaying = state == PlayerState.playing);
+    });
+    _player.onPositionChanged.listen((position) {
+      if (!mounted) return;
+      setState(() => _position = position);
+    });
+    _player.onPlayerComplete.listen((_) {
+      if (!mounted) return;
+      setState(() {
+        _isPlaying = false;
+        _position = Duration.zero;
+      });
+    });
+  }
+
+  Future<void> _toggleRecording() async {
+    if (_isRecording) {
+      await _stopRecording();
+      return;
+    }
+
+    try {
+      if (!await _recorder.hasPermission()) {
+        Get.snackbar(
+          'block_voice_permission_title'.tr,
+          'block_voice_permission_message'.tr,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        return;
+      }
+
+      await _player.stop();
+      final documents = await getApplicationDocumentsDirectory();
+      final voiceDirectory = Directory(
+        p.join(documents.path, 'diary_voice_notes'),
+      );
+      if (!await voiceDirectory.exists()) {
+        await voiceDirectory.create(recursive: true);
+      }
+      final path = p.join(
+        voiceDirectory.path,
+        'voice_${widget.block.id}_${DateTime.now().millisecondsSinceEpoch}.m4a',
+      );
+
+      await _recorder.start(
+        const RecordConfig(
+          encoder: AudioEncoder.aacLc,
+          bitRate: 128000,
+          sampleRate: 44100,
+        ),
+        path: path,
+      );
+      _recordingWatch
+        ..reset()
+        ..start();
+      _recordingTimer = Timer.periodic(const Duration(milliseconds: 250), (_) {
+        if (!mounted) return;
+        setState(() => _recordingDuration = _recordingWatch.elapsed);
+      });
+      if (!mounted) return;
+      setState(() {
+        _isRecording = true;
+        _recordingDuration = Duration.zero;
+      });
+    } catch (_) {
+      _showRecordingError();
+    }
+  }
+
+  Future<void> _stopRecording() async {
+    try {
+      final path = await _recorder.stop();
+      _recordingWatch.stop();
+      _recordingTimer?.cancel();
+      final duration = _recordingWatch.elapsed;
+      if (!mounted) return;
+      setState(() {
+        _isRecording = false;
+        _recordingDuration = Duration.zero;
+      });
+      if (path == null) {
+        _showRecordingError();
+        return;
+      }
+      widget.controller.updateVoiceBlock(widget.block.id, path, duration);
+    } catch (_) {
+      _recordingWatch.stop();
+      _recordingTimer?.cancel();
+      if (mounted) {
+        setState(() => _isRecording = false);
+        _showRecordingError();
+      }
+    }
+  }
+
+  void _showRecordingError() {
+    Get.snackbar(
+      'block_voice_error_title'.tr,
+      'block_voice_error_message'.tr,
+      snackPosition: SnackPosition.BOTTOM,
+    );
+  }
+
+  Future<void> _togglePlayback() async {
+    final path = _audioPath;
+    if (path == null) return;
+    if (_isPlaying) {
+      await _player.pause();
+    } else {
+      await _player.play(DeviceFileSource(path), position: _position);
+    }
+  }
+
+  Future<void> _deleteRecording() async {
+    await _player.stop();
+    if (!mounted) return;
+    setState(() {
+      _isPlaying = false;
+      _position = Duration.zero;
+    });
+    widget.controller.clearVoiceBlock(widget.block.id);
+  }
+
+  String _formatDuration(Duration duration) {
+    final minutes = duration.inMinutes;
+    final seconds = duration.inSeconds.remainder(60);
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  void dispose() {
+    _recordingTimer?.cancel();
+    _recordingWatch.stop();
+    unawaited(_recorder.dispose());
+    unawaited(_player.dispose());
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final hasRecording = _audioPath != null;
+    final shownDuration = _isRecording ? _recordingDuration : _audioDuration;
+    final progress = _audioDuration.inMilliseconds == 0
+        ? 0.0
+        : (_position.inMilliseconds / _audioDuration.inMilliseconds).clamp(
+            0.0,
+            1.0,
+          );
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 11, 12, 11),
+      decoration: BoxDecoration(
+        color: AppColors.appRed.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          _VoiceActionButton(
+            icon: _isRecording
+                ? Icons.stop_rounded
+                : hasRecording
+                ? (_isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded)
+                : Icons.mic_rounded,
+            active: _isRecording,
+            onTap: _isRecording || !hasRecording
+                ? _toggleRecording
+                : _togglePlayback,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: hasRecording || _isRecording
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _isRecording
+                            ? 'block_voice_recording'.tr
+                            : 'block_voice'.tr,
+                        style: AppFonts.appStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: context.noteTextPrimaryColor,
+                        ),
+                      ),
+                      const SizedBox(height: 7),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(2),
+                        child: LinearProgressIndicator(
+                          value: _isRecording ? null : progress,
+                          minHeight: 3,
+                          backgroundColor: AppColors.appRed.withValues(
+                            alpha: 0.16,
+                          ),
+                          color: AppColors.appRed.withValues(alpha: 0.72),
+                        ),
+                      ),
+                    ],
+                  )
+                : Text(
+                    'block_voice_record'.tr,
+                    style: AppFonts.appStyle(
+                      fontSize: 14,
+                      color: context.noteTextSecondaryColor,
+                    ),
+                  ),
+          ),
+          const SizedBox(width: 10),
+          Text(
+            _formatDuration(shownDuration),
+            style: AppFonts.appStyle(
+              fontSize: 12,
+              color: context.noteTextSecondaryColor,
+            ),
+          ),
+          if (hasRecording && !_isRecording) ...[
+            const SizedBox(width: 4),
+            IconButton(
+              visualDensity: VisualDensity.compact,
+              tooltip: 'delete'.tr,
+              onPressed: _deleteRecording,
+              icon: Icon(
+                Icons.close_rounded,
+                size: 18,
+                color: context.noteTextSecondaryColor,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _VoiceActionButton extends StatelessWidget {
+  const _VoiceActionButton({
+    required this.icon,
+    required this.active,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final bool active;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        width: 42,
+        height: 42,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: active ? AppColors.danger : AppColors.appRed,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, size: 22, color: Colors.white),
       ),
     );
   }
@@ -934,17 +1285,21 @@ class _DiaryDividerBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: Container(height: 1, color: AppColors.noteChipBorder)),
+        Expanded(
+          child: Container(height: 1, color: context.noteChipBorderColor),
+        ),
         Container(
           width: 4,
           height: 4,
           margin: const EdgeInsets.symmetric(horizontal: 10),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: AppColors.noteChipBorder,
+            color: context.noteChipBorderColor,
           ),
         ),
-        Expanded(child: Container(height: 1, color: AppColors.noteChipBorder)),
+        Expanded(
+          child: Container(height: 1, color: context.noteChipBorderColor),
+        ),
       ],
     );
   }

@@ -26,10 +26,10 @@ class DiaryComposeToolbar extends StatelessWidget {
       padding: EdgeInsets.only(bottom: bottomInset),
       child: Container(
         height: 48,
-        decoration: const BoxDecoration(
-          color: AppColors.noteSurface,
+        decoration: BoxDecoration(
+          color: context.noteSurfaceColor,
           border: Border(
-            top: BorderSide(color: AppColors.noteDivider, width: 0.6),
+            top: BorderSide(color: context.noteDividerColor, width: 0.6),
           ),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 6),
@@ -38,10 +38,10 @@ class DiaryComposeToolbar extends StatelessWidget {
             _ToolIcon(icon: Icons.camera_alt_outlined, onTap: onCamera),
             _ToolIcon(icon: Icons.photo_library_outlined, onTap: onGallery),
             _ToolIcon(icon: Icons.mic_none_rounded, onTap: onMic),
-            const SizedBox(
+            SizedBox(
               height: 20,
               child: VerticalDivider(
-                color: AppColors.noteDivider,
+                color: context.noteDividerColor,
                 width: 18,
                 thickness: 0.6,
               ),
@@ -99,14 +99,14 @@ class _ToolIcon extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          color: active ? AppColors.noteChipBackground : Colors.transparent,
+          color: active ? context.noteChipBackgroundColor : Colors.transparent,
         ),
         child: Icon(
           icon,
           size: 19,
           color: active
-              ? AppColors.noteTextPrimary
-              : AppColors.noteTextSecondary,
+              ? context.noteTextPrimaryColor
+              : context.noteTextSecondaryColor,
         ),
       ),
     );

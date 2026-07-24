@@ -33,6 +33,8 @@ class DiaryEntryController extends GetxController {
   String? _id;
   DateTime? _lastSavedAt;
   Timer? _autosaveDebounce;
+  bool _isDeleted = false;
+  String? _newBlockFocusId;
   static const Duration _autosaveDelay = Duration(milliseconds: 900);
 
   final RxList<DiaryBlock> blocks = <DiaryBlock>[].obs;
@@ -80,16 +82,58 @@ class DiaryEntryController extends GetxController {
         break;
       case DiaryBlockType.divider:
       case DiaryBlockType.image:
+      case DiaryBlockType.voice:
         break;
     }
+    _newBlockFocusId = block.id;
     blocks.add(block);
     _onEdited();
   }
 
+  bool takeNewBlockFocus(String blockId) {
+    if (_newBlockFocusId != blockId) return false;
+    _newBlockFocusId = null;
+    return true;
+  }
+
   void removeBlock(String blockId) {
+    final block = _blockById(blockId);
     blocks.removeWhere((b) => b.id == blockId);
+    final audioPath = block?.audioPath;
+    if (audioPath != null) {
+      unawaited(_deleteLocalFile(audioPath));
+    }
     _syncAttachmentPaths();
     _onEdited();
+  }
+
+  void updateVoiceBlock(String blockId, String path, Duration duration) {
+    final block = _blockById(blockId);
+    if (block == null || block.type != DiaryBlockType.voice) return;
+    block.audioPath = path;
+    block.audioDurationMs = duration.inMilliseconds;
+    blocks.refresh();
+    _onEdited();
+  }
+
+  void clearVoiceBlock(String blockId) {
+    final block = _blockById(blockId);
+    if (block == null || block.type != DiaryBlockType.voice) return;
+    final audioPath = block.audioPath;
+    block.audioPath = null;
+    block.audioDurationMs = 0;
+    blocks.refresh();
+    _onEdited();
+    if (audioPath != null) {
+      unawaited(_deleteLocalFile(audioPath));
+    }
+  }
+
+  Future<void> _deleteLocalFile(String path) async {
+    final file = File(path);
+    if (await file.exists()) {
+      await file.delete();
+    }
   }
 
   Future<void> pickImages({bool fromCamera = false}) async {
@@ -160,7 +204,7 @@ class DiaryEntryController extends GetxController {
     return Get.bottomSheet<List<XFile>>(
       ImagePreviewSheet(images: picked),
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: Get.theme.colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -370,6 +414,7 @@ class DiaryEntryController extends GetxController {
   void toggleUnderline() => isUnderline.toggle();
 
   Future<void> save() async {
+    if (_isDeleted) return;
     if (titleController.text.trim().isEmpty &&
         contentController.text.trim().isEmpty &&
         blocks.isEmpty) {
@@ -390,15 +435,41 @@ class DiaryEntryController extends GetxController {
       imagePaths: attachmentPaths.toList(),
       blocks: blocks.toList(),
     );
+    // Publish the id before awaiting SQLite so a delete tapped during an
+    // in-flight autosave can still target the newly-created row.
+    _id = payload.id;
 
     try {
       await DiaryDatabaseService.instance.upsertEntry(payload);
-      _id = payload.id;
+      if (_isDeleted) return;
       _lastSavedAt = DateTime.now();
       saveStatus.value = DiarySaveStatus.saved;
     } catch (_) {
       saveStatus.value = DiarySaveStatus.error;
     }
+  }
+
+  Future<DiaryEntryDeleted> deleteEntry() async {
+    _autosaveDebounce?.cancel();
+    _isDeleted = true;
+
+    final id = _id ?? entry?.id;
+    if (id != null) {
+      try {
+        await DiaryDatabaseService.instance.deleteEntry(id);
+        for (final block in blocks) {
+          final audioPath = block.audioPath;
+          if (audioPath != null) {
+            await _deleteLocalFile(audioPath);
+          }
+        }
+      } catch (_) {
+        _isDeleted = false;
+        rethrow;
+      }
+    }
+
+    return DiaryEntryDeleted(id);
   }
 
   DiaryEntryModel _currentSnapshot() {
