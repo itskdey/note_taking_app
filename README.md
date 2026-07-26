@@ -23,6 +23,19 @@ entries, and first-class Khmer language support.
 The package is currently named `note_taking_app`; **Komnottra Diary** is the
 product name shown in the interface.
 
+## Screenshots
+
+<p align="center">
+  <img src="assets/screenshots/komnottra-timeline.png" alt="Komnottra Diary timeline" width="31%">
+  <img src="assets/screenshots/komnottra-editor.png" alt="Komnottra Diary entry editor" width="31%">
+  <img src="assets/screenshots/komnottra-block-menu.png" alt="Komnottra Diary block menu" width="31%">
+</p>
+
+<p align="center">
+  <img src="assets/screenshots/komnottra-image-attachments.png" alt="Adding image attachments to a diary entry" width="46%">
+  <img src="assets/screenshots/komnottra-image-picker.png" alt="Selecting multiple images for a diary entry" width="46%">
+</p>
+
 ## Highlights
 
 - **Timeline-based diary** — entries are grouped by year, month, and day, with
