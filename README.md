@@ -1,4 +1,4 @@
-# Komnottra Diary
+# Komnottra Diary - កំណត់ត្រា
 
 <p align="center">
   <img src="assets/logo/logo.png" alt="Komnottra Diary logo" width="112">
