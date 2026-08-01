@@ -42,6 +42,7 @@ flutter:
     - assets/fonts/
     - assets/svg/
     - assets/logo/
+    - .env
 
   fonts:
     - family: Brier

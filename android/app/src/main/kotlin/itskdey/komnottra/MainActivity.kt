@@ -1,4 +1,4 @@
-package itskdey.komnottra
+package app.itskdey.komnottra
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 
